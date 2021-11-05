@@ -1,0 +1,66 @@
+//
+//  Copyright (c) 2021 Matteu
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in all
+//  copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
+//
+
+@use 'sass:string';
+@use 'sass:list';
+@use 'sass:map';
+
+@use '../values/paddings-and-margin' as values;
+@use 'composer-validator' as validator;
+
+/// Composes styles using utility queries.
+/// @param {list} $query
+/// @return composed properties.
+@mixin compose($utilities) {
+    @each $utility in $utilities {
+        @include _get-util($utility);
+    }
+}
+
+/// Dependency function for getting the queried utility.
+/// @param {string} $util
+/// @return queried utility property with value.
+@mixin _get-util($util) {
+    $_prop: validator.clean-property-key_($util);
+    $_key: validator.clean-property-value_($util);
+    $_value: map.get(values.$m-p-values, $_key);
+    
+    @if validator.is-property-key_($util) {
+        @include _compose-util-value($_prop, $_value);
+    }
+}
+
+/// Composes value configuration based on queried keys.
+/// @param {string} $key
+/// @param {*} $value
+/// @return {*} composed value with property.
+@mixin _compose-util-value($key, $value) {
+    $_prop: map.get(validator.$property-keywords, $key);
+    
+    @if $key == 'mx' or $key == 'px' {
+        #{$_prop}: 0 $value;
+    } @else if $key == 'my' or $key == 'py' {
+        #{$_prop}: $value 0;
+    } @else {
+        #{$_prop}: $value;
+    }
+}

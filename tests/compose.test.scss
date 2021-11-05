@@ -20,4 +20,8 @@
 //  SOFTWARE.
 //
 
-@forward 'core';
+@use '../src' as hibla;
+
+.test-component {
+    @include hibla.compose(('my-1', 'pl-4'));
+}

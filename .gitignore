@@ -3,4 +3,4 @@
 /node_modules
 
 tests/**/*.test.css
-tests/**/*.test.map.css
+tests/**/*.test.css.map
